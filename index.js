@@ -14,10 +14,20 @@ const PORT = process.env.PORT;
 
 const app = express();
 
+const allowedOrigins = ['http://localhost:5173', 'https://astor-front.vercel.app'];
+
 // Middlewares
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error('No autorizado por CORS'))
+        }
+    }
+}));
 
 // Conexion a la base de datos
 
