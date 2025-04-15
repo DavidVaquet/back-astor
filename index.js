@@ -26,7 +26,8 @@ app.use(cors({
         } else {
             callback(new Error('No autorizado por CORS'))
         }
-    }
+    },
+    credentials: true
 }));
 
 // Conexion a la base de datos
