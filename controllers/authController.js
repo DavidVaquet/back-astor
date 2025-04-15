@@ -140,7 +140,10 @@ export const resetPassword = async (req, res) => {
     const { nuevaPassword } = req.body;
   
     try {
+        console.log("Token recibido:", token);
+        console.log("Nueva password recibida:", nuevaPassword);
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("Token decodificado:", decoded);
       const usuario = await User.findById(decoded.id);
       if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
   
