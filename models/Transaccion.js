@@ -42,6 +42,10 @@ const transaccionSchema = new Schema({
     fecha: {
         type: Date,
         default: Date.now
+    }, 
+    archivado: {
+        type: Boolean,
+        default: false
     },
     usuario: {
         type: Schema.Types.ObjectId,

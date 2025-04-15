@@ -2,6 +2,7 @@ import express from 'express';
 import { crearTransaccion, obtenerComprobantesPorLocal, obtenerTotalGeneral, obtenerTotalesPorLocal, eliminarComprobante, editarComprobante, obtenerCantidadComprobantesPorMes } from '../controllers/transaccionController.js';
 import { verificarToken } from '../middlewares/validar-token.js';
 import { validarRolPorLocal } from '../middlewares/validar-local.js';
+import { validarRol } from '../middlewares/validar-rol.js';
 const router = express.Router();
 
 // Ruta para crear una transaccion
@@ -18,7 +19,7 @@ router.get('/totalPorLocal/:local', verificarToken, obtenerTotalesPorLocal);
 router.get("/totalesMensuales/:local/:anio", verificarToken, obtenerCantidadComprobantesPorMes);
 
 // Ruta para eliminar un comprobante
-router.delete('/eliminarComprobante/:id', verificarToken, eliminarComprobante);
+router.delete('/eliminarComprobante/:id', verificarToken, validarRol(['ADMIN_ROLE']), eliminarComprobante);
 
 // Ruta para editar un comprobante
 router.put('/editarComprobante/:id', verificarToken, editarComprobante);

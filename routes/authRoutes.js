@@ -1,7 +1,8 @@
 import express from 'express';
-import { login, registro } from '../controllers/authController.js';
+import { login, registro, resetPassword, solicitarResetPassword } from '../controllers/authController.js';
 import { validarCampos } from '../middlewares/validar-campos.js';
 import { check } from 'express-validator';
+import { verificarResetToken } from '../middlewares/validar-resetToken.js';
 const router = express.Router();
 
 // Ruta para registrar usuarios
@@ -18,5 +19,14 @@ router.post('/registro', [
 router.post('/login', [
     validarCampos
 ], login);
+
+
+router.post('/solicitar-reset-password', [
+    check('email', 'El email es obligatorio').isEmail(),
+    validarCampos
+], solicitarResetPassword);
+
+
+router.put('/restablecer-password/:token', verificarResetToken, resetPassword);
 
 export default router;

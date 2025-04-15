@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { request, response } from 'express';
+import { enviarEmailRecuperacion } from "../helpers/enviarEmail.js";
 
 export const registro = async(req = request, res = response) => {
 
@@ -97,5 +98,59 @@ export const login = async(req, res) => {
         
         res.status(500).json({ error: error.message});
     }
+};
 
-}
+
+export const solicitarResetPassword = async (req, res) => {
+
+    const { email } = req.body;
+
+    try {
+        const usuario = await User.findOne({email});
+
+        if(!usuario) {
+            return res.status(400).json({
+                msg: 'No existe un usuario con ese email'
+            })
+        };
+
+        const token = jwt.sign(
+            {id: usuario._id,},
+            process.env.JWT_SECRET,
+            {expiresIn: '15m'}
+        )
+
+        await enviarEmailRecuperacion({
+            nombre: usuario.nombre,
+            email: usuario.email,
+            token
+        })
+
+        res.json({ msg: 'Hemos enviado un correo con las instrucciones' });
+
+    } catch (error) {
+        
+        res.status(500).json({ msg: 'Error al generar enlace de recuperación', error: error.message });
+    }
+};
+
+
+export const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { nuevaPassword } = req.body;
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const usuario = await User.findById(decoded.id);
+      if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+  
+      const passwordHash = await bcrypt.hash(nuevaPassword, 10);
+      usuario.password = passwordHash;
+      await usuario.save();
+  
+      return res.json({ msg: 'Contraseña restablecida con éxito' });
+    } catch (error) {
+      return res.status(400).json({ msg: 'Token inválido o expirado' });
+    }
+  };
+

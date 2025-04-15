@@ -60,7 +60,7 @@ export const crearTransaccion = async(req = request, res = response) => {
       const { local } = req.params; 
   
       
-      const comprobantes = await Transaccion.find({ local }).populate('usuario', 'nombre');
+      const comprobantes = await Transaccion.find({ local}).populate('usuario', 'nombre');
   
       res.json(comprobantes);
   
@@ -74,79 +74,86 @@ export const crearTransaccion = async(req = request, res = response) => {
   
   
   export const obtenerTotalesPorLocal = async(req = request, res = response) => {
-
     try {
-        const { local } = req.params;
-
-        const ingresos = await Transaccion.aggregate([
-          { $match: { local, tipo: 'ingreso'} },
-          { $group: { _id: null, total: { $sum: '$monto'}}}
-        ]);
-
-        const egresos = await Transaccion.aggregate([
-          { $match: { local, tipo: 'egreso'} },
-          { $group: { _id: null, total: { $sum: '$monto'}}}
-        ]);
-
-        const totalIngresos = ingresos[0]?.total;
-        const totalEgresos = egresos[0]?.total;
-
-        const balance = totalIngresos - totalEgresos;
-
-
-        res.json({
-          ingreso: ingresos[0]?.total || 0,
-          egreso: egresos[0]?.total || 0,
-          balance: balance
-        });
-
+      const { local } = req.params;
+  
+      const ahora = new Date();
+      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+  
+      const ingresos = await Transaccion.aggregate([
+        { $match: { local, tipo: 'ingreso', fecha: { $gte: inicioMes, $lte: finMes } } },
+        { $group: { _id: null, total: { $sum: '$monto' } } }
+      ]);
+  
+      const egresos = await Transaccion.aggregate([
+        { $match: { local, tipo: 'egreso', fecha: { $gte: inicioMes, $lte: finMes } } },
+        { $group: { _id: null, total: { $sum: '$monto' } } }
+      ]);
+  
+      const totalIngresos = ingresos[0]?.total || 0;
+      const totalEgresos = egresos[0]?.total || 0;
+      const balance = totalIngresos - totalEgresos;
+  
+      res.json({
+        ingreso: totalIngresos,
+        egreso: totalEgresos,
+        balance,
+      });
+  
     } catch (error) {
-      
       res.status(500).json({
         msg: 'Error al obtener los totales',
         error: error.message
-      })
+      });
     }
   };
+  
 
 
   export const obtenerTotalGeneral = async(req, res) => {
-
     try {
-
+      const ahora = new Date();
+      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+  
       const resultado = await Transaccion.aggregate([
-        { $group: { _id: '$tipo', total: { $sum: '$monto'}}}
+        {
+          $match: {
+            fecha: { $gte: inicioMes, $lte: finMes }
+          }
+        },
+        {
+          $group: {
+            _id: '$tipo',
+            total: { $sum: '$monto' }
+          }
+        }
       ]);
-
+  
       const totales = {
         ingreso: 0,
         egreso: 0,
         balance: 0
       };
-
-      resultado.forEach( item => {
-        if (item._id === 'ingreso') {
-          totales.ingreso = item.total
-        };
-        if (item._id === 'egreso') {
-          totales.egreso = item.total
-        }
+  
+      resultado.forEach(item => {
+        if (item._id === 'ingreso') totales.ingreso = item.total;
+        if (item._id === 'egreso') totales.egreso = item.total;
       });
-
-
+  
       totales.balance = totales.ingreso - totales.egreso;
-
+  
       res.json(totales);
-
+  
     } catch (error) {
-      
       res.status(500).json({
         msg: 'Error al obtener los totales generales',
         error: error.message
-      })
-
+      });
     }
   };
+  
 
 
   export const eliminarComprobante = async(req, res) => {
