@@ -84,7 +84,7 @@ export const login = async(req, res) => {
             id: usuario._id,
             roles: usuario.roles
         }, process.env.JWT_SECRET,
-        { expiresIn: '6h'})
+        { expiresIn: '15m'})
 
         res.json({ 
             token,
@@ -136,6 +136,7 @@ export const solicitarResetPassword = async (req, res) => {
 
 
 export const resetPassword = async (req, res) => {
+    
     const { token } = req.params;
     const { nuevaPassword } = req.body;
   

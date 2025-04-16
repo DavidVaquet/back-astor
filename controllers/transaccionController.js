@@ -80,7 +80,9 @@ export const crearTransaccion = async(req = request, res = response) => {
       const ahora = new Date();
       const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
       const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
-  
+      
+      console.time(`obtenerTotalesPorLocal - ${local}`);
+
       const ingresos = await Transaccion.aggregate([
         { $match: { local, tipo: 'ingreso', fecha: { $gte: inicioMes, $lte: finMes } } },
         { $group: { _id: null, total: { $sum: '$monto' } } }
@@ -94,7 +96,9 @@ export const crearTransaccion = async(req = request, res = response) => {
       const totalIngresos = ingresos[0]?.total || 0;
       const totalEgresos = egresos[0]?.total || 0;
       const balance = totalIngresos - totalEgresos;
-  
+      
+      console.timeEnd(`obtenerTotalesPorLocal - ${local}`);
+
       res.json({
         ingreso: totalIngresos,
         egreso: totalEgresos,
@@ -112,11 +116,14 @@ export const crearTransaccion = async(req = request, res = response) => {
 
 
   export const obtenerTotalGeneral = async(req, res) => {
+
     try {
       const ahora = new Date();
       const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
       const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
-  
+      
+      console.time(`obtenerTotalGeneral`);
+
       const resultado = await Transaccion.aggregate([
         {
           $match: {
@@ -143,7 +150,9 @@ export const crearTransaccion = async(req = request, res = response) => {
       });
   
       totales.balance = totales.ingreso - totales.egreso;
-  
+      
+      console.timeEnd(`obtenerTotalGeneral`);
+
       res.json(totales);
   
     } catch (error) {
