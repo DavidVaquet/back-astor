@@ -84,7 +84,7 @@ export const login = async(req, res) => {
             id: usuario._id,
             roles: usuario.roles
         }, process.env.JWT_SECRET,
-        { expiresIn: '15m'})
+        { expiresIn: '2h'})
 
         res.json({ 
             token,

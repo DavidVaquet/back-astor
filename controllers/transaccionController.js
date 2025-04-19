@@ -73,95 +73,95 @@ export const crearTransaccion = async(req = request, res = response) => {
   };
   
   
-  export const obtenerTotalesPorLocal = async(req = request, res = response) => {
-    try {
-      const { local } = req.params;
+  // export const obtenerTotalesPorLocal = async(req = request, res = response) => {
+  //   try {
+  //     const { local } = req.params;
   
-      const ahora = new Date();
-      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-      const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+  //     const ahora = new Date();
+  //     const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  //     const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
       
-      console.time(`obtenerTotalesPorLocal - ${local}`);
+  //     console.time(`obtenerTotalesPorLocal - ${local}`);
 
-      const ingresos = await Transaccion.aggregate([
-        { $match: { local, tipo: 'ingreso', fecha: { $gte: inicioMes, $lte: finMes } } },
-        { $group: { _id: null, total: { $sum: '$monto' } } }
-      ]);
+  //     const ingresos = await Transaccion.aggregate([
+  //       { $match: { local, tipo: 'ingreso', fecha: { $gte: inicioMes, $lte: finMes } } },
+  //       { $group: { _id: null, total: { $sum: '$monto' } } }
+  //     ]);
   
-      const egresos = await Transaccion.aggregate([
-        { $match: { local, tipo: 'egreso', fecha: { $gte: inicioMes, $lte: finMes } } },
-        { $group: { _id: null, total: { $sum: '$monto' } } }
-      ]);
+  //     const egresos = await Transaccion.aggregate([
+  //       { $match: { local, tipo: 'egreso', fecha: { $gte: inicioMes, $lte: finMes } } },
+  //       { $group: { _id: null, total: { $sum: '$monto' } } }
+  //     ]);
   
-      const totalIngresos = ingresos[0]?.total || 0;
-      const totalEgresos = egresos[0]?.total || 0;
-      const balance = totalIngresos - totalEgresos;
+  //     const totalIngresos = ingresos[0]?.total || 0;
+  //     const totalEgresos = egresos[0]?.total || 0;
+  //     const balance = totalIngresos - totalEgresos;
       
-      console.timeEnd(`obtenerTotalesPorLocal - ${local}`);
+  //     console.timeEnd(`obtenerTotalesPorLocal - ${local}`);
 
-      res.json({
-        ingreso: totalIngresos,
-        egreso: totalEgresos,
-        balance,
-      });
+  //     res.json({
+  //       ingreso: totalIngresos,
+  //       egreso: totalEgresos,
+  //       balance,
+  //     });
   
-    } catch (error) {
-      res.status(500).json({
-        msg: 'Error al obtener los totales',
-        error: error.message
-      });
-    }
-  };
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       msg: 'Error al obtener los totales',
+  //       error: error.message
+  //     });
+  //   }
+  // };
   
 
 
-  export const obtenerTotalGeneral = async(req, res) => {
+  // export const obtenerTotalGeneral = async(req, res) => {
 
-    try {
-      const ahora = new Date();
-      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-      const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+  //   try {
+  //     const ahora = new Date();
+  //     const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  //     const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
       
-      console.time(`obtenerTotalGeneral`);
+  //     console.time(`obtenerTotalGeneral`);
 
-      const resultado = await Transaccion.aggregate([
-        {
-          $match: {
-            fecha: { $gte: inicioMes, $lte: finMes }
-          }
-        },
-        {
-          $group: {
-            _id: '$tipo',
-            total: { $sum: '$monto' }
-          }
-        }
-      ]);
+  //     const resultado = await Transaccion.aggregate([
+  //       {
+  //         $match: {
+  //           fecha: { $gte: inicioMes, $lte: finMes }
+  //         }
+  //       },
+  //       {
+  //         $group: {
+  //           _id: '$tipo',
+  //           total: { $sum: '$monto' }
+  //         }
+  //       }
+  //     ]);
   
-      const totales = {
-        ingreso: 0,
-        egreso: 0,
-        balance: 0
-      };
+  //     const totales = {
+  //       ingreso: 0,
+  //       egreso: 0,
+  //       balance: 0
+  //     };
   
-      resultado.forEach(item => {
-        if (item._id === 'ingreso') totales.ingreso = item.total;
-        if (item._id === 'egreso') totales.egreso = item.total;
-      });
+  //     resultado.forEach(item => {
+  //       if (item._id === 'ingreso') totales.ingreso = item.total;
+  //       if (item._id === 'egreso') totales.egreso = item.total;
+  //     });
   
-      totales.balance = totales.ingreso - totales.egreso;
+  //     totales.balance = totales.ingreso - totales.egreso;
       
-      console.timeEnd(`obtenerTotalGeneral`);
+  //     console.timeEnd(`obtenerTotalGeneral`);
 
-      res.json(totales);
+  //     res.json(totales);
   
-    } catch (error) {
-      res.status(500).json({
-        msg: 'Error al obtener los totales generales',
-        error: error.message
-      });
-    }
-  };
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       msg: 'Error al obtener los totales generales',
+  //       error: error.message
+  //     });
+  //   }
+  // };
   
 
 
@@ -244,5 +244,64 @@ export const obtenerCantidadComprobantesPorMes = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ msg: 'Error al obtener la cantidad de comprobantes por mes', error: error.message });
+  }
+};
+
+
+export const obtenerResumenBalances = async (req, res) => {
+  try {
+    const ahora = new Date();
+    const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+    const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+
+   
+    console.time('obtenerResumenBalances');
+
+   
+    const resultados = await Transaccion.aggregate([
+      {
+        $match: {
+          fecha: { $gte: inicioMes, $lte: finMes }
+        }
+      },
+      {
+        $group: {
+          _id: { local: "$local", tipo: "$tipo" },
+          total: { $sum: "$monto" }
+        }
+      }
+    ]);
+
+    
+    const resumen = {
+      astorFray: { ingreso: 0, egreso: 0, balance: 0 },
+      astorGalindez: { ingreso: 0, egreso: 0, balance: 0 },
+      inmobiliaria: { ingreso: 0, egreso: 0, balance: 0 },
+      general: { ingreso: 0, egreso: 0, balance: 0 }
+    };
+
+    
+    resultados.forEach(({ _id, total }) => {
+      const { local, tipo } = _id;
+
+      if (!resumen[local]) return; 
+
+      resumen[local][tipo] = total;
+      resumen[local].balance = resumen[local].ingreso - resumen[local].egreso;
+
+      resumen.general[tipo] += total;
+      resumen.general.balance = resumen.general.ingreso - resumen.general.egreso;
+    });
+
+    
+    console.timeEnd('obtenerResumenBalances');
+
+    res.json(resumen);
+
+  } catch (error) {
+    res.status(500).json({
+      msg: 'Error al obtener el resumen de balances',
+      error: error.message
+    });
   }
 };

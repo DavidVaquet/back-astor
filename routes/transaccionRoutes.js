@@ -1,5 +1,5 @@
 import express from 'express';
-import { crearTransaccion, obtenerComprobantesPorLocal, obtenerTotalGeneral, obtenerTotalesPorLocal, eliminarComprobante, editarComprobante, obtenerCantidadComprobantesPorMes } from '../controllers/transaccionController.js';
+import { crearTransaccion, obtenerComprobantesPorLocal, eliminarComprobante, editarComprobante, obtenerCantidadComprobantesPorMes, obtenerResumenBalances } from '../controllers/transaccionController.js';
 import { verificarToken } from '../middlewares/validar-token.js';
 import { validarRolPorLocal } from '../middlewares/validar-local.js';
 import { validarRol } from '../middlewares/validar-rol.js';
@@ -12,8 +12,9 @@ router.post('/crearTransaccion', verificarToken, validarRolPorLocal, crearTransa
 router.get('/listarComprobantes/:local', verificarToken, obtenerComprobantesPorLocal);
 
 // Ruta para obtener totales por local y generales
-router.get('/obtenerTotalesGenerales', verificarToken, obtenerTotalGeneral);
-router.get('/totalPorLocal/:local', verificarToken, obtenerTotalesPorLocal);
+// router.get('/obtenerTotalesGenerales', verificarToken, obtenerTotalGeneral);
+// router.get('/totalPorLocal/:local', verificarToken, obtenerTotalesPorLocal);
+router.get('/resumen-balances', verificarToken, obtenerResumenBalances)
 
 // Ruta para obtener los datos del gráfico circular por local y mes
 router.get("/totalesMensuales/:local/:anio", verificarToken, obtenerCantidadComprobantesPorMes);
