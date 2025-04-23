@@ -15,7 +15,7 @@ export const iniciarHistorialJob = () => {
                 json: console.log
               });
         } catch (error) {
-            console.error('❌ Error al ejecutar el cron job:', error.message);
+            console.error('Error al ejecutar el cron job:', error.message);
         }
     })
 };

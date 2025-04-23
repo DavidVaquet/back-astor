@@ -7,21 +7,21 @@ dotenv.config();
 const test = async () => {
   await conectarDB();
 
-  console.log('🧪 Ejecutando prueba de historial mensual...');
+  console.log('Ejecutando prueba de historial mensual...');
 
   try {
     await guardarHistorialYReiniciar({}, {
       status: (code) => ({
-        json: (data) => console.log(`✅ Status ${code}:`, data)
+        json: (data) => console.log(`Status ${code}:`, data)
       }),
-      json: (data) => console.log('✅ Respuesta:', data)
+      json: (data) => console.log('Respuesta:', data)
     });
 
     console.log('🎉 Prueba completada.');
-    process.exit(0); // Salir correctamente
+    process.exit(0); 
   } catch (error) {
     console.error('❌ Error durante la prueba:', error.message);
-    process.exit(1); // Salir con error
+    process.exit(1); 
   }
 };
 
