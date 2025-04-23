@@ -5,10 +5,10 @@ dotenv.config();
 
 export const conectarDB = async() => {
 
-    console.log("🔍 MONGODB ENV VARIABLE:", process.env.MONGODB_URI);
+    console.log("🔍 MONGODB ENV VARIABLE:", process.env.MONGODB_URL);
 
     try {
-        await mongoose.connect('mongodb+srv://user_node:asd123@miclusterapp.cvukv.mongodb.net/astorDB');
+        await mongoose.connect(process.env.MONGODB_URL);
         console.log('Base de datos online')
 
     } catch (error) {
