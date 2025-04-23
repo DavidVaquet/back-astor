@@ -233,8 +233,8 @@ export const obtenerCantidadComprobantesPorMes = async (req, res) => {
       }
     ]);
 
-    // Estructura de salida: un array con 12 posiciones (una por cada mes)
-    const cantidadesPorMes = Array(12).fill(0); // inicializamos con ceros
+   
+    const cantidadesPorMes = Array(12).fill(0); 
 
     resultados.forEach(r => {
       cantidadesPorMes[r._id - 1] = r.cantidad;
