@@ -8,7 +8,7 @@ export const conectarDB = async() => {
     console.log("🔍 MONGODB ENV VARIABLE:", process.env.MONGODB_URI);
 
     try {
-        await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect('mongodb+srv://user_node:asd123@miclusterapp.cvukv.mongodb.net/astorDB');
         console.log('Base de datos online')
 
     } catch (error) {
