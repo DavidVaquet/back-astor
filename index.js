@@ -6,7 +6,9 @@ import authRoutes from './routes/authRoutes.js';
 import transaccionRoutes from './routes/transaccionRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import historialRoutes from './routes/historialRoutes.js';
-import { iniciarHistorialJob } from "./jobs/historialJobs.js";
+import transferenciasRoutes from './routes/transferenciasRoutes.js';
+import { estadisticasSemanales, iniciarHistorialJob } from "./jobs/historialJobs.js";
+import estadisticasSemanalesRoutes from './routes/estadisticasSemanalesRoutes.js';
 
 dotenv.config();
 
@@ -20,14 +22,16 @@ const allowedOrigins = ['http://localhost:5173', 'https://astor-front.vercel.app
 
 app.use(express.json());
 app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error('No autorizado por CORS'))
-        }
-    },
-    credentials: true
+  origin: function(origin, callback) {
+    // Permitir sin origin (como desde mobile local) o si está en la lista
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS bloqueado para el origin: ${origin}`);
+      callback(new Error('No autorizado por CORS'));
+    }
+  },
+  credentials: true,
 }));
 
 // Conexion a la base de datos
@@ -40,6 +44,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/transacciones', transaccionRoutes);
 app.use('/api/usuarios', userRoutes);
 app.use('/api/historial', historialRoutes);
+app.use('/api/transferencias', transferenciasRoutes);
+app.use('/api/estadisticas', estadisticasSemanalesRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`)
@@ -47,3 +53,4 @@ app.listen(PORT, () => {
 
 
 iniciarHistorialJob();
+estadisticasSemanales();

@@ -10,16 +10,24 @@ const transaccionSchema = new Schema({
     },
     tipoComprobante: {
         type: String,
-        enum: ['factura', 'ticket', 'recibo', 'transferencia'],
+        enum: ['factura', 'ticket', 'recibo', 'transferencia', 'qr'],
         required: true,
     },
     monto: {
         type: Number,
         required: true
     },
+    montoAlquiler: {
+        type: Number,
+        required: false
+    },
+    porcentaje: {
+        type: Number,
+        required: false
+    },
     nroComprobante: {
         type: String,
-        required: true
+        required: false,
     },
     imagenComprobante: {
         type: String,
@@ -32,7 +40,7 @@ const transaccionSchema = new Schema({
     },
     metodoPago: {
         type: String,
-        enum: ['transferencia', 'efectivo', 'tarjeta', 'debito'],
+        enum: ['transferencia', 'efectivo', 'tarjeta', 'debito', 'qr', 'combinada'],
         required: true
     },
     descripcion: {
@@ -42,6 +50,11 @@ const transaccionSchema = new Schema({
     fecha: {
         type: Date,
         default: Date.now
+    },
+    cuenta: {
+        type: String,
+        enum: ["Yanina", "Sebastian"],
+        required: false
     }, 
     archivado: {
         type: Boolean,

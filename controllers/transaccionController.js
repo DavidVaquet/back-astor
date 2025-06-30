@@ -12,7 +12,10 @@ export const crearTransaccion = async(req = request, res = response) => {
         imagenComprobante,
         local,
         descripcion,
-        metodoPago
+        metodoPago,
+        cuenta,
+        montoAlquiler,
+        porcentaje
       } = req.body;
   
       // Validaciones
@@ -20,11 +23,11 @@ export const crearTransaccion = async(req = request, res = response) => {
         return res.status(400).json({ msg: "Tipo inválido" });
       }
   
-      if (!["factura", "ticket", "recibo", "transferencia"].includes(tipoComprobante)) {
+      if (!["factura", "ticket", "recibo", "transferencia", "qr"].includes(tipoComprobante)) {
         return res.status(400).json({ msg: "Tipo de comprobante inválido" });
       }
   
-      if (!["efectivo", "transferencia", "tarjeta", "debito"].includes(metodoPago)) {
+      if (!["efectivo", "transferencia", "tarjeta", "debito", "qr", "combinada"].includes(metodoPago)) {
         return res.status(400).json({ msg: "Método de pago inválido" });
       }
   
@@ -37,7 +40,7 @@ export const crearTransaccion = async(req = request, res = response) => {
       }
   
       if (!monto || isNaN(monto) || monto <= 0) {
-        return res.status(400).json({ msg: "Monto inválido" });
+        return res.status(400).json({ msg: "Importe inválido" });
       }
   
       // Crear y guardar transacción
@@ -255,7 +258,7 @@ export const obtenerResumenBalances = async (req, res) => {
     const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
 
    
-    console.time('obtenerResumenBalances');
+    // console.time('obtenerResumenBalances');
 
    
     const resultados = await Transaccion.aggregate([
@@ -294,7 +297,7 @@ export const obtenerResumenBalances = async (req, res) => {
     });
 
     
-    console.timeEnd('obtenerResumenBalances');
+    // console.timeEnd('obtenerResumenBalances');
 
     res.json(resumen);
 

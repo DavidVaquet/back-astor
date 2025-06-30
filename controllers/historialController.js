@@ -114,7 +114,7 @@ export const guardarHistorialConsolidado = async (req, res) => {
       });
     }
 
-    console.log("Historial consolidado guardado exitosamente");
+    // console.log("Historial consolidado guardado exitosamente");
     
   } catch (error) {
     console.error("❌ Error al guardar historial consolidado:", error.message);

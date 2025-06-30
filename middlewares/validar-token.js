@@ -21,7 +21,7 @@ export const verificarToken = (req = request, res = response, next) => {
 
     next();
   } catch (error) {
-    return res.status(400).json({
+    return res.status(401).json({
       error: 'Token invalido',
     });
   }
