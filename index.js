@@ -12,7 +12,7 @@ import estadisticasSemanalesRoutes from './routes/estadisticasSemanalesRoutes.js
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5002;
 
 const app = express();
 
