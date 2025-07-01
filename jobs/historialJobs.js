@@ -33,6 +33,7 @@ export const estadisticasSemanales = () => {
   cron.schedule('0 14 * * 1', calcularEstadisticasSemanales);
 };
 
+
 // TEST JOB / SE EJECUTA CADA 1 MIN
 // export const estadisticasSemanales = () => {
 //   cron.schedule('* * * * *', calcularEstadisticasSemanales);

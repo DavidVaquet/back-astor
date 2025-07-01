@@ -53,6 +53,9 @@ app.use('/api/usuarios', userRoutes);
 app.use('/api/historial', historialRoutes);
 app.use('/api/transferencias', transferenciasRoutes);
 app.use('/api/estadisticas', estadisticasSemanalesRoutes);
+app.get('/api/ping', (req, res) => {
+  res.send('pong');
+});
 
 // Iniciar servidor
 app.listen(PORT, () => {
