@@ -31,7 +31,7 @@ const transaccionSchema = new Schema({
     },
     imagenComprobante: {
         type: String,
-        required: true
+        required: false
     },
     local: {
         type: String,

@@ -9,7 +9,7 @@ export const crearTransaccion = async(req = request, res = response) => {
         tipoComprobante,
         monto,
         nroComprobante,
-        imagenComprobante,
+        imagenComprobante = null,
         local,
         descripcion,
         metodoPago,
