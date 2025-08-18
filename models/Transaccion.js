@@ -53,7 +53,7 @@ const transaccionSchema = new Schema({
     },
     cuenta: {
         type: String,
-        enum: ["Yanina", "Sebastian"],
+        enum: ["BNA+", "Mercadopago", "Naranja X"],
         required: false
     }, 
     archivado: {
