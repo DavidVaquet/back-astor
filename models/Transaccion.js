@@ -54,7 +54,7 @@ const transaccionSchema = new Schema({
     cuenta: {
         type: String,
         enum: ["BNA+", "Mercadopago", "Naranja X"],
-        required: false
+        default: null
     }, 
     archivado: {
         type: Boolean,
