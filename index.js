@@ -16,33 +16,6 @@ dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-if (process.env.NODE_ENV === "development") {
-  const allowedOrigins = [
-    "http://localhost:5173",        
-    "https://astor-front.vercel.app" 
-  ];
-
-  const corsOptions = {
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`❌ CORS bloqueado para el origin: ${origin}`);
-        callback(new Error("No autorizado por CORS"));
-      }
-    },
-    credentials: true,
-  };
-
-  app.use(cors(corsOptions));
-  app.options('*', cors(corsOptions));
-  console.log("✅ CORS habilitado en modo DEV:", allowedOrigins);
-} else {
-  // Producción (frontend y backend en mismo dominio)
-  // No es necesario habilitar CORS
-  console.log("🚀 Producción: CORS no habilitado (same-origin).");
-}
-
 // Body parser
 app.use(express.json());
 
@@ -56,6 +29,15 @@ app.use('/api/transferencias', transferenciasRoutes);
 app.use('/api/estadisticas', estadisticasSemanalesRoutes);
 app.get('/api/ping', (req, res) => {
   res.send('pong');
+});
+
+app.use((req, res) => {
+  res.status(404).json({ ok: false, error: 'Not found' });
+});
+
+app.use((err, _req, res, _next) => {
+  console.error('UNCAUGHT ERROR:', err);
+  res.status(err.status || 500).json({ ok: false, error: err.message });
 });
 
 async function start() {
