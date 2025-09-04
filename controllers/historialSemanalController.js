@@ -141,7 +141,7 @@ export const getEstadisticasSemanales = async (req, res) => {
     }
 
     
-    const estadisticas = await EstadisticaSemanal.find(filtro);
+    const estadisticas = await EstadisticaSemanal.find(filtro).sort({_id: -1});
     console.log(estadisticas);
     res.status(200).json(estadisticas);
   } catch (error) {

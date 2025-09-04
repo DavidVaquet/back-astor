@@ -63,7 +63,9 @@ export const crearTransaccion = async(req = request, res = response) => {
       const { local } = req.params; 
   
       
-      const comprobantes = await Transaccion.find({ local}).populate('usuario', 'nombre');
+      const comprobantes = await Transaccion.find({ local})
+      .populate('usuario', 'nombre')
+      .sort({fecha: -1});
   
       res.json(comprobantes);
   

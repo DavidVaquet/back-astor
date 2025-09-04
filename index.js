@@ -13,38 +13,39 @@ import estadisticasSemanalesRoutes from './routes/estadisticasSemanalesRoutes.js
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT;
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://astor-front.vercel.app'
-];
+if (process.env.NODE_ENV === "development") {
+  const allowedOrigins = [
+    "http://localhost:5173",        
+    "https://astor-front.vercel.app" 
+  ];
 
-// ✅ Middleware CORS
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS bloqueado para el origin: ${origin}`);
-      callback(new Error('No autorizado por CORS'));
-    }
-  },
-  credentials: true,
-};
+  const corsOptions = {
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`❌ CORS bloqueado para el origin: ${origin}`);
+        callback(new Error("No autorizado por CORS"));
+      }
+    },
+    credentials: true,
+  };
 
-// ✅ Aplica CORS primero
-app.use(cors(corsOptions));
-
-// ✅ Preflight manual para todas las rutas
-app.options('*', cors(corsOptions));
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
+  console.log("✅ CORS habilitado en modo DEV:", allowedOrigins);
+} else {
+  // Producción (frontend y backend en mismo dominio)
+  // No es necesario habilitar CORS
+  console.log("🚀 Producción: CORS no habilitado (same-origin).");
+}
 
 // Body parser
 app.use(express.json());
 
-// Conexión a la base de datos
-conectarDB();
 
 // Rutas
 app.use('/api/auth', authRoutes);
@@ -57,11 +58,20 @@ app.get('/api/ping', (req, res) => {
   res.send('pong');
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+async function start() {
+  try {
+    await conectarDB();
+    app.listen(PORT, () => {
+      console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
+    });
 
-// Cron jobs
-iniciarHistorialJob();
-estadisticasSemanales();
+    iniciarHistorialJob();
+    estadisticasSemanales();
+
+  } catch (err) {
+    console.error('Error al iniciar la app:', err);
+    process.exit(1);
+  }
+}
+
+start();

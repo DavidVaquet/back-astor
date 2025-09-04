@@ -21,8 +21,10 @@ export const crearTransferenciaCompartida = async (req, res) => {
 
 export const obtenerTransferenciasCompartidas = async (req, res) => {
     try {
-        const transferencias = await TransferenciaCompartida.find().populate('usuario', 'nombre');
-        if (!transferencias) return res.status(500).json({ msg: 'Error al obtener las transferencias.'});
+        const transferencias = await TransferenciaCompartida.find()
+        .populate('usuario', 'nombre')
+        .sort({fecha: -1});
+        if (!transferencias) return res.status(400).json({ msg: 'Error al obtener las transferencias.'});
         return res.status(200).json(transferencias);
     } catch (error) {
         return res.status(500).json({ msg: 'Error al obtener las transferencias.'});
